@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+   {% block tittle %}
+      Home
+   {% endblock tittle %}
+   {% block content %}
+      <div>
+         <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Join Today</legend>
+               <div class="form-group">
+                  {{ form.numeroDocumento.label(class="form-control-label") }}
+                  {% if form.numeroDocumento.errors %}
+                     {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                     {% for error in errors %}
+                        <div class="invalid-feedback">
+                           <span>
+                              {{ error }}
+                           </span>
+                        </div>
+                     {% endfor %}
+                  {% else %}
+                     {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                  {% endif %}
+               </div>
+               {% for examene in form.marcasExamenes %}
+                  <div class="form-group">
+                     {{ form.examen.label(class="form-control-label") }}
+                     {% if form.examen.errors %}
+                        {{ form.examen(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                           <div class="invalid-feedback">
+                              <span>
+                                 {{ error }}
+                              </span>
+                           </div>
+                        {% endfor %}
+                     {% else %}
+                        {{ form.examen(class="form-control form-control-lg") }}
+                     {% endif %}
+                  </div>
+               {% endfor %}
+               
+            </fieldset>
+            <div class="formm-group">
+               {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+         </form>
+      </div>
+      <div class="border-top pt-3">
+         <small class="text-muted">
+            Already Have an Account? <a class="ml-2" href="/login"> Sign In</a>
+         </small>
+      </div>
+   {% endblock content %}}
+
+   

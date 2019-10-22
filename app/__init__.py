@@ -1,8 +1,8 @@
 from flask import Flask
-from app import dbManage
+from app.dbManage import DB
 from flask_bcrypt import Bcrypt
 
-db = dbManage.DB('mongodb://localhost:27017')
+db = DB('mongodb://localhost:27017')
 
 app = Flask(__name__)
 

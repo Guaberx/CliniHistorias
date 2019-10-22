@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+   {% block tittle %}
+      Home
+   {% endblock tittle %}
+   {% block content %}
+   <img style="padding-top: 2em; padding-bottom: 2em" src="https://www.belltower.news/wp-content/uploads/sites/3/2016/08/War_Ensign_of_Germany_1933-.jpg" alt="">
+   <img style="padding-top: 2em; padding-bottom: 2em" src="https://www.belltower.news/wp-content/uploads/sites/3/2016/08/War_Ensign_of_Germany_1933-.jpg" alt="">
+   <img style="padding-top: 2em; padding-bottom: 2em" src="https://www.belltower.news/wp-content/uploads/sites/3/2016/08/War_Ensign_of_Germany_1933-.jpg" alt="">
+   <img style="padding-top: 2em; padding-bottom: 2em" src="https://www.belltower.news/wp-content/uploads/sites/3/2016/08/War_Ensign_of_Germany_1933-.jpg" alt="">
+      <div>
+         <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Register in<br>
+                  <div style="">
+                     <span style="color: black">ZE </span>
+                     <span style="color: white">DEUTSCHE </span>
+                     <span style="color: red">WEHRMARCHT</span>
+                  </div>
+               </legend>
+               <div class="form-group">
+                  {{ form.tipoDocumento.label(class="form-control-label") }}
+                  {% if form.tipoDocumento.errors %}
+                     {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
+                     {% for error in errors %}
+                        <div class="invalid-feedback">
+                           <span>
+                              {{ error }}
+                           </span>
+                        </div>
+                     {% endfor %}
+                  {% else %}
+                     {{ form.tipoDocumento(class="form-control form-control-lg") }}
+                  {% endif %}
+               </div>
+               <div class="form-group">
+                  {{ form.numeroDocumento.label(class="form-control-label") }}
+                  {% if form.numeroDocumento.errors %}
+                     {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                     {% for error in errors %}
+                        <div class="invalid-feedback">
+                           <span>
+                              {{ error }}
+                           </span>
+                        </div>
+                     {% endfor %}
+                  {% else %}
+                     {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                  {% endif %}
+               </div>
+               
+            </fieldset>
+            <div class="formm-group">
+               {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+         </form>
+      </div>
+      
+      
+   {% endblock content %}}
+
+   

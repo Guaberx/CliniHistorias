@@ -14,13 +14,13 @@
             </tr>
          </thead>
          <tbody>
-            {% for i in range(usuarios|length) %} 
+            {% for i in range(Personas|length) %} 
                <tr>
                   <!-- <th scope="row">1</th> -->
-                  <td>{{Personas[i]["Nombre"]}}</td>
-                  <td>{{Personas[i]["Apellido"]}}</td>
-                  <td>{{Personas[i]["cc"]}}</td>
-                  <td>{{Personas[i]["Contrasena"]}}</td>
+                  <td>{{Personas[i]['Nombre']}}</td>
+                  <td>{{Personas[i]['Apellido']}}</td>
+                  <td>{{Personas[i]['cc']}}</td>
+                  <td>{{Personas[i]['Contrasena']}}</td>
                   <td><a rel="stylesheet" href="/hello/{{Personas[i]['Nombre'] + ' ' + Personas[i]['Apellido']}}">
                   <button>Ingresar como {{Personas[i]["Nombre"]}}</button></a></td>
                </tr>
