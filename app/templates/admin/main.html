@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+    {% block tittle %}
+        Modulo de Administrador
+    {% endblock tittle %}
+    {% block content %}
+        <h1>Modulo Administrador</h1>
+        <form action={{ url_for('adminModuleAdd') }}>
+            <button>Agregar Usuario</button>
+        </form>
+        
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in usuarios %} 
+                        <tr>
+                            <td><a href="">{{i['email']}}</a></td>
+                            <td><a href="">{{i['type']}}</a></td>
+                            <div class="row">
+                                    <div class="col">
+                                        <td><a href="">Modificar</a></td>
+                                    </div>
+                                    <div class="col">
+                                        <td><a href="">Eliminar</a></td>
+                                    </div>
+                                </div>
+                        </tr>
+                        
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endblock content %}}

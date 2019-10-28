@@ -1,5 +1,134 @@
 from pymongo import MongoClient
 
+class DB:
+    
+    def __init__(self, dbUrl):#'mongodb://localhost:27017'
+        # self.client = MongoClient()
+        self.__client = MongoClient(dbUrl)
+        self.__db = self.__client['test']
+        self.__acceptedRoles = ['Empresa','Paciente','Admin','Medico', 'Recepcionista']
+
+    #CREATES
+    def createUsers(self, email, hashedPassword, userType, creationData = {}):
+        #Read others
+        #Modify others
+        #db.posts.update_one({'_id':x , 'Consultas.id':1} , {'$set':{'Consultas.$.start.Dependencias' : [1,2,3,5,8] }} )
+        #coll.update({'ref': ref}, {'$push': {'tags': new_tag}})
+        #db.posts.update_one({'_id':x , 'Consultas.id':1} , {'$push':{'Consultas.$.start.Dependencias' : 15 }} )
+        if userType in self.__acceptedRoles:
+            if userType == 'Empresa':
+                data = {
+                    'nombre':creationData['nombre'],
+                    'empleados':[]#creationData['empeados']
+                }
+            elif userType == 'Paciente':
+                data = {
+                    'nombre':creationData['nombre'],
+                    'apellido':creationData['apellido'],
+                    #'fechaNacimiento':creationData['fechaNacimiento'],
+                    'formularioPaciente':{},#Es un diccionario con todos los campos respectivos del hc
+                    'tipoDocumento': creationData['tipoDocumento'],
+                    'numeroDocumento': creationData['numeroDocumento'],
+                    'consultaActivas':[],
+                    'consultasRealizadas':[],
+                    'consultasEspera': [],
+                    'consultas':[]
+                }
+            elif userType == 'Medico':
+                data = {
+                    'nombre': creationData['nombre'],
+                    'apellido':creationData['apellido'],
+                    'tipoDocumento': creationData['tipoDocumento'],
+                    'numeroDocumento': creationData['numeroDocumento'],
+                    'tipoDeMedico': creationData['tipoDeMedico'] #Que especialidad/funcion en le EPS
+                }
+            elif userType == 'Recepcionista':
+                data = {
+                    'nombre': creationData['nombre'],
+                    'apellido':creationData['apellido'],
+                    'tipoDocumento': creationData['tipoDocumento'],
+                    'numeroDocumento': creationData['numeroDocumento'],
+                }
+            elif userType == 'Admin':
+                data = {
+                    'nombre': creationData['nombre'],
+                    'apellido':creationData['apellido'],
+                    'tipoDocumento': creationData['tipoDocumento'],
+                    'numeroDocumento': creationData['numeroDocumento'],
+                }
+
+            #Falta verificar si el usuario no existe antes de creatlo
+
+            tmpUserId = self.__db[userType].insert(data)
+            self.__db.users.insert({
+                'email':email,
+                'password': hashedPassword,
+                'type': userType,
+                'userId': tmpUserId,
+            })
+            return True
+        return False
+    
+    #GETS
+    def userExists(self, email):
+        tmp = self.__db.users.find_one({'email':email})
+        if tmp: return True
+        return False
+        
+    def getAllUsers(self, grupo):
+        users = []
+        for user in self.__db[grupo].find({}):
+            users.append(user)
+        return users
+
+    def getUserInfo(self, grupo, query):
+        usuarios = []
+        for user in self.__db[grupo].find(query): 
+            usuarios.append(user)
+        return usuarios
+
+    def getUserInfoById(self, group, userId):
+        return self.__db[group].find_one({'_id':userId})
+    
+    def getUserInfoByEmail(self, group, email):
+        return self.__db[group].find_one({'email':email})
+    
+    def getUserIdByEmail(self, email):
+        return self.__db.users.find_one({'email':email})['_id']
+    
+    def getUserPasswordByEmail(self, email):
+        return self.__db.users.find_one({'email':email})['password']
+    
+    def buscarConsultasPosiblesUsuario(self, userEmail):
+        pass
+
+    #SETS
+    # medico -> agregar consulta -> que medico y la consulta
+    # medico -> modifica consulta en espera, la vuelve realizada y se agrega a las realizadas del paciente
+    # secretaria -> agregar historia clinica
+    # secretaria -> agregar paciente a cola. Tendria una fecha y agrega las consultas que se haran esa fecha
+    # empresas -> crear paciente nuevo ligado a la empresa
+    # empresa -> remitir paciente. es decir agregar consultas a ese usuario. Obviamente que pertenezca a la empresa
+    # empresa -> consultar resultados de paciente
+    # admin -> editar, anadir y borrar usuarios
+
+    
+    def setUserParameter(self, grupo, searchQuery, dataQuery, newData):
+        self.__db[grupo].update_one(searchQuery , {'$set':{dataQuery : newData }} )
+    
+    def appendUserParameter(self, grupo, searchQuery, dataQuery, newData):
+        self.__db[grupo].update_one(searchQuery , {'$push':{dataQuery : newData }} )
+
+
+
+    #delete_many
+
+    # db.pacientes.update_one( {'apellido':'Vergas'} , {'$push':{ 'consultas' : 'Hola mundo 2' }} )
+
+    #DELETE
+
+
+
 #Esta coleccion contiene todo los datos de login de los usuarios y el tipo de usuario
 users = [
     {
@@ -91,103 +220,3 @@ cola = {
     'cardiologo': ['idUsuario1', 'idUsuario2'],
     'reumatologo': ['idUsuario2', 'idUsuario5']
 }
-
-class DB:
-    
-    def __init__(self, dbUrl):#'mongodb://localhost:27017'
-        # self.client = MongoClient()
-        self.__client = MongoClient(dbUrl)
-        self.__db = self.__client['test']
-        self.__acceptedRoles = ['empresas','pacientes','admin','medicos', 'recepcionistas']
-
-    #CREATES
-    def createUsers(self, email, hashedPassword, userType, creationData = {}):
-        #Read others
-        #Modify others
-        #db.posts.update_one({'_id':x , 'Consultas.id':1} , {'$set':{'Consultas.$.start.Dependencias' : [1,2,3,5,8] }} )
-        #coll.update({'ref': ref}, {'$push': {'tags': new_tag}})
-        #db.posts.update_one({'_id':x , 'Consultas.id':1} , {'$push':{'Consultas.$.start.Dependencias' : 15 }} )
-        if userType in self.__acceptedRoles:
-            if userType == 'empresas':
-                data = {
-                    'nombre':creationData['nombre'],
-                    'empleados':creationData['empeados']
-                }
-            elif userType == 'pacientes':
-                data = {
-                    'nombre':creationData['nombre'],
-                    'apellido':creationData['apellido'],
-                    'fechaNacimiento':creationData['fechaNacimiento'],
-                    'formularioPaciente':{},#Es un diccionario con todos los campos respectivos del hc
-                    'tipoDocumento': creationData['tipoDocumento'],
-                    'numeroDocumento': creationData['numeroDocumento'],
-                    'consultaActivas':[],
-                    'consultasRealizadas':[],
-                    'consultasEspera': [],
-                    'consultas':[]
-                }
-            elif userType == 'medicos':
-                data = {
-                    'nombre': creationData['nombre'],
-                    'apellido':creationData['apellido'],
-                    'tipoDocumento': creationData['tipoDocumento'],
-                    'numeroDocumento': creationData['numeroDocumento'],
-                    'tipoDeMedico': creationData['tipoDeMedico'] #Que especialidad/funcion en le EPS
-                }
-            elif userType == 'recepcionista':
-                data = {
-                    'nombre': creationData['nombre'],
-                    'apellido':creationData['apellido'],
-                    'tipoDocumento': creationData['tipoDocumento'],
-                    'numeroDocumento': creationData['numeroDocumento'],
-                }
-            elif userType == 'admin':
-                data = {
-                    'nombre': creationData['nombre'],
-                    'apellido':creationData['apellido'],
-                    'tipoDocumento': creationData['tipoDocumento'],
-                    'numeroDocumento': creationData['numeroDocumento'],
-                }
-
-            #Falta verificar si el usuario no existe antes de creatlo
-
-            self.__db[userType].insert_one(data)
-            tmpUserId = self.__db[userType].find_one({ "tipoDocumento":creationData['tipoDocumento'], "numeroDocumento":creationData['numeroDocumento']})['_id']
-            self.__db.users.insert({
-                'email':email,
-                'password': hashedPassword,
-                'type': userType,
-                'userId': tmpUserId,
-            })
-            return True
-        return False
-    
-    #GETS
-    def userExists(self, email):
-        tmp = self.__db[users].find_one({'email':email})
-        if tmp: return True
-        return False
-        
-    def getAllUsers(self, grupo):
-        users = []
-        for user in self.__db[grupo].find({}):
-            users.append(user)
-        return users
-
-    def getUserInfo(self, grupo, query):
-        usuarios = []
-        for user in self.__db[grupo].find(query): 
-            usuarios.append(user)
-        return usuarios
-    
-    def buscarConsultasPosiblesUsuario(self, userEmail):
-        pass
-
-    #SETS
-    def setUserParameter(self, grupo, searchQuery, dataQuery, newData):
-        self.__db[grupo].update_one(searchQuery , {'$set':{dataQuery : newData }} )
-    
-    def appendUserParameter(self, grupo, searchQuery, dataQuery, newData):
-        self.__db[grupo].update_one(searchQuery , {'$push':{dataQuery : newData }} )
-
-    #DELETE

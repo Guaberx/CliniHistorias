@@ -1,0 +1,137 @@
+{% extends "layout.html" %}
+   {% block tittle %}
+      GHOLA MAEDICO
+   {% endblock tittle %}
+   {% block content %}
+   <h1 class="font-weight-bold">Bienvenido: Medico ...</h1>
+   <div class="row">
+       <div class="column">
+           
+           <button class="btn btn-primary">Siguiente Paciente</button>
+           <div class="row">
+               <div class="column">
+                   <p>Id Paciente:</p>
+               </div>
+               <div class="column">
+                    <p>Nombre Paciente:</p>
+                </div>
+           </div>
+           <p>Descripción:</p>
+           <p>Resultados:</p>
+           <p>Comentarios:</p>
+
+           <div class="row">
+                <div class="column">
+                    <button class="btn btn-primary">Guardar</button>
+                </div>
+                <div class="column">
+                    <button class="btn btn-primary">Siguiente</button>
+                </div>
+            </div>
+       </div>
+
+       <div class="column">
+           <p>Examenes a realizar</p>
+        </div>
+   </div>
+   {%if 1==0%}
+   <!-- Paciente -->
+   <h1 class="font-weight-bold">Bienvenido {{user['nombre']}}</h1>
+        <div>
+            <div class="text-justify">
+                <div class="row">
+                    <div class="column">
+                        <p>NOMBRE: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                    <div class="column">
+                        <p>CIUDAD: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <p>APELLIDO: <span>{{user['apellido']}}</span> </p>
+                    </div>
+                    <div class="column">
+                        <p>BARRIO: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <p>TIPO DOCUMENTO: <span>{{user['tipoDocumento']}}</span> </p>
+                    </div>
+                    <div class="column">
+                        <p>EDAD: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <p>NUMERO DOCUMENTO: <span>{{user['numeroDocumento']}}</span> </p>
+                    </div>
+                    <div class="column">
+                        <p>GENERO: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <p>EMAIL: <span>{{email}}</span> </p>
+                    </div>
+                    <div class="column">
+                        <p>TELEFONO: <span>{{user['nombre']}}</span> </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                              <th scope="col">Examenes Realizados</th>
+                              <th scope="col">Examenes Pendientes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in consultas %} 
+                                <tr>
+                                    {% if (i[0]|length) > 0 %}
+                                        <td>{{i[0]['descripcion']}}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                    {% if (i[1]|length) > 0 %}
+                                        <td>{{i[1]['descripcion']}}</td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                  <th scope="col">Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in consultas %}
+                                    <tr>
+                                        {% if (i[0]|length) > 0 %}
+                                            <td>{{i[0]['resultados']}}</td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        </div>
+   {%endif%}
+        
+            
+   {% endblock content %}}
+
+   
