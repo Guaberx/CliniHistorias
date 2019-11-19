@@ -1,12 +1,16 @@
 from pymongo import MongoClient
-
+from app.constants import USERTYPES
 class DB:
-    
     def __init__(self, dbUrl):#'mongodb://localhost:27017'
         # self.client = MongoClient()
         self.__client = MongoClient(dbUrl)
         self.__db = self.__client['test']
+        self.debug = self.__db
         self.__acceptedRoles = ['Empresa','Paciente','Admin','Medico', 'Recepcionista']
+
+    #DEBUG
+    def deleteDB(self):
+        self.__client.drop_database('test')
 
     #CREATES
     def createUsers(self, email, hashedPassword, userType, creationData = {}):
@@ -16,15 +20,20 @@ class DB:
         #coll.update({'ref': ref}, {'$push': {'tags': new_tag}})
         #db.posts.update_one({'_id':x , 'Consultas.id':1} , {'$push':{'Consultas.$.start.Dependencias' : 15 }} )
         if userType in self.__acceptedRoles:
-            if userType == 'Empresa':
+            if userType == USERTYPES[0]:
                 data = {
                     'nombre':creationData['nombre'],
                     'empleados':[]#creationData['empeados']
                 }
-            elif userType == 'Paciente':
+            elif userType == USERTYPES[3]:
                 data = {
                     'nombre':creationData['nombre'],
                     'apellido':creationData['apellido'],
+                    'ciudad':"Ciudad",
+                    'direccion':"Direccion",
+                    'edad':"Edad",
+                    'genero':"Genero",
+                    'telefono':"Telefono",
                     #'fechaNacimiento':creationData['fechaNacimiento'],
                     'formularioPaciente':{},#Es un diccionario con todos los campos respectivos del hc
                     'tipoDocumento': creationData['tipoDocumento'],
@@ -34,7 +43,7 @@ class DB:
                     'consultasEspera': [],
                     'consultas':[]
                 }
-            elif userType == 'Medico':
+            elif userType == USERTYPES[1]:
                 data = {
                     'nombre': creationData['nombre'],
                     'apellido':creationData['apellido'],
@@ -42,14 +51,14 @@ class DB:
                     'numeroDocumento': creationData['numeroDocumento'],
                     'tipoDeMedico': creationData['tipoDeMedico'] #Que especialidad/funcion en le EPS
                 }
-            elif userType == 'Recepcionista':
+            elif userType == USERTYPES[2]:
                 data = {
                     'nombre': creationData['nombre'],
                     'apellido':creationData['apellido'],
                     'tipoDocumento': creationData['tipoDocumento'],
                     'numeroDocumento': creationData['numeroDocumento'],
                 }
-            elif userType == 'Admin':
+            elif userType == USERTYPES[4]:
                 data = {
                     'nombre': creationData['nombre'],
                     'apellido':creationData['apellido'],
@@ -165,6 +174,7 @@ pacientes = [
                 'comentarios': 'Estos son los comentarios que pupede leer la empresa. ej: el paciente no debe estar expuesto a ambientes toxicos',
                 'dependencias':[1,2,3,4], # una lista de los id de las consultas que tienen que realizarse para poder realizar esta consulta.
                 'estadoConsulta': 'Espera', #Realizada, Espera, Activa.
+                'especialista': 'Cardiologo',
                 'atendio':[ # Informacion sobre quien hizo la consulta o examen.
                     {
                         'id':7,
@@ -177,6 +187,7 @@ pacientes = [
         ]
     }
 ]
+
 
 #Esta coleccion contiene la informacion de medicos, especialistas, laboratoristas y enfermeros.
 medicos = [
@@ -214,9 +225,17 @@ admin = [
 ]
 
 #Esta coleccion se utliza para m
-cola = {
-    'enConsulta': ['idUsuario1'], # Guarda los usuarios que estan actualmente en alguna consulta, de esta manera, un usuario no sera llamado a otra consulta mientras este en una
-    #El resto de listas en el objeto cola hace referencia a la cola de cada especialista. De esta manera cuando un cardiologo, por ejemplo, llame al siguiente en su cola. Se haran cambios solo sobre la cola correspondiente a los cardiologos. es decir, la cola esta ordenada para cada especialista
-    'cardiologo': ['idUsuario1', 'idUsuario2'],
-    'reumatologo': ['idUsuario2', 'idUsuario5']
-}
+cola = [
+    {
+        'type':'enConsulta',
+        'data': ['idUsuario1'] # Guarda los usuarios que estan actualmente en alguna consulta, de esta manera, un usuario no sera llamado a otra consulta mientras este en una
+    },#El resto de listas en el objeto cola hace referencia a la cola de cada especialista. De esta manera cuando un cardiologo, por ejemplo, llame al siguiente en su cola. Se haran cambios solo sobre la cola correspondiente a los cardiologos. es decir, la cola esta ordenada para cada especialista
+    {
+        'type':'cardiologo',
+        'data': ['idUsuario1', 'idUsuario2']
+    },  
+    {
+        'type':'reumatologo',
+        'data': ['idUsuario2', 'idUsuario5']
+    }   
+]

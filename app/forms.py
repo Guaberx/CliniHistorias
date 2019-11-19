@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SelectMultipleField
 from wtforms.validators import ValidationError, DataRequired, Length, Email, EqualTo, NumberRange
 from app import db
+from app.constants import *
 
 #Validaciones Extra
 def validacionExtra(validacion, field, errmsg):
@@ -31,36 +32,37 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+#Medico
+class SiguientePacienteMedicoForm(FlaskForm):
+    submit = SubmitField('Siguiente Paciente')
+    
+class EnviarExamenesMedicoForm(FlaskForm):
+    tiposExamenes = []
+    for i in EXAMENES:
+        tiposExamenes.append((EXAMENES[i][0],EXAMENES[i][0]))
+    examenes = SelectField('Examen a mandar', choices=tiposExamenes)
+    dependencias = SelectMultipleField('Dependencias del examen', choices=tiposExamenes)
+    submit = SubmitField('Mandar Examenes')
+
+class LlenarHistoriaClinicaMedicoForm(FlaskForm):
+    descripcion = StringField('Descripcion', validators=[DataRequired(), Length(min=0,max=99999999999999999999)], render_kw={"placeholder":"Escriba los sintomas"})
+    resultados = StringField('Resultados',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba los resultados del examen"})
+    comentarios = StringField('Comentarios',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba cosas a tener en cuenta (Este campo no debe contener informacion sensible o privada)"})
+    submit = SubmitField('Guardar')
 
 #Empresa
-class RegistrarUsuarioEmpresaForm(FlaskForm):
-    tiposDocumentos = [('1', 'Cedula'), ('2', 'Pasaporte'), ('3', 'Cedula de Extranjeria')]
-    tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    numeroDocumento = StringField('Numero de Documento', validators=[DataRequired(), NumberRange(min=0,max=99999999999999999999)], render_kw={"placeholder":"Escriba el numero de documento..."})
-    nombre = StringField('Nombre',validators=[DataRequired(),Length(min=2, max=50)], render_kw={"placeholder":"Pepito"})
-    apellido = StringField('Apellido',validators=[DataRequired(),Length(min=2, max=50)], render_kw={"placeholder":"Perez"})
-    submit = SubmitField('Login')
+#Recepcionista
+class RecepcionistaAgregarAColaForm(FlaskForm):
+    email = StringField('Email',validators=[DataRequired(),Email()], render_kw={"placeholder":"alguien@dominio.com"})
+    submit = SubmitField('Agregar a Cola')
 
-class SolicitarPruebasEmpresaForm(FlaskForm):
-    numeroDocumento = StringField('Numero de Documento', validators=[DataRequired(), NumberRange(min=0,max=99999999999999999999)], render_kw={"placeholder":"Id Usuario"})
-    __Examenes = ['Sangre', 'Tac', 'Orina']
-    __Especialistas = ['Internista', 'Gastroenterologo', 'Ginecologo', 'Otorrinolaringologo', 'Oftalmologo', 'Fonoaudiologo', 'Oncologo']
-    
-    marcasExamenes = []
-    for i in __Examenes:
-        marcasExamenes.append(BooleanField(i))
-    
-    marcasEspecialistas = []
-    for i in __Especialistas:
-        marcasEspecialistas.append(BooleanField(i))
-    
-    submit = SubmitField('Login')
-
-class SolicitarResultadosEmpresaForm(FlaskForm):
-    numeroDocumento = StringField('Numero de Documento', validators=[DataRequired(), NumberRange(min=0,max=99999999999999999999)], render_kw={"placeholder":"Escriba el numero de documento..."})
-    submit = SubmitField('Login')
-
+class RecepcionistaLlenarInscripcionForm(FlaskForm):
+    email = StringField('Email',validators=[DataRequired(),Email()], render_kw={"placeholder":"alguien@dominio.com"})
+    submit = SubmitField('Llenar Inscripcion')
 #Admin
+class EliminarUsuarioForm(FlaskForm):
+    submit = SubmitField('Eliminar Usuario')
+
 class AgregarUsuario(FlaskForm):
     tiposUsiario = [('Empresa', 'Empresa'), ('Medico', 'Medico'), ('Paciente', 'Paciente'), ('Recepcionista', 'Recepcionista'), ('Admin', 'Admin')]
     tipo = SelectField('Tipo de Usuario', choices=tiposUsiario)
@@ -75,7 +77,8 @@ class AgregarUsuario(FlaskForm):
     #         raise ValidationError(f"El usuario {email} ya existe")
 
 class AgregarUsuarioEmpresa(FlaskForm):
-    nombre = StringField('Nombre Empresa',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre de la Empresa"})
+    nombre = StringField('Nombre de la Empresa',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Empresa S.A."})
+    codigoIdentificacion = StringField('Codigo de Identificacion de la Empresa',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"AAA00BBB111"})
     submit = SubmitField('Crear Empresa')
 
 class AgregarUsuarioMedico(FlaskForm):
@@ -89,12 +92,12 @@ class AgregarUsuarioMedico(FlaskForm):
     submit = SubmitField('Crear Medico')
 
 class AgregarUsuarioRecepcionista(FlaskForm):
-    nombre = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
-    apellido = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
+    nombre = StringField('Nombre Recepcionista',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
+    apellido = StringField('Nombre Recepcionista',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
     tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
     tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    numeroDocumento = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
-    submit = SubmitField('Crear Medico')
+    numeroDocumento = StringField('Nombre Recepcionista',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    submit = SubmitField('Crear Recepcionista')
 
 class AgregarUsuarioPaciente(FlaskForm):
     nombre = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})

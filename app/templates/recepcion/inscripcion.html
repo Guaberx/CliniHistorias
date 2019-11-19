@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+{% block tittle %}
+    Recepcion
+{% endblock tittle %}
+{% block scripts %}
+{% endblock scripts %}
+{% block content %}
+<h1>Recepcionista</h1>
+<h2>Recepcionista: {{user['nombre']}} {{user['apellido']}}</h2>
+<br>
+<br>
+<br>
+<form method="POST" action="">
+    {{ formAgregarACola.hidden_tag() }}
+    <legend class="border-bottom mb-4">Agregar a Cola</legend>
+    <fieldset class="form-group">
+        <div class="form-group">
+        {{ formAgregarACola.email.label(class="form-control-label") }}
+            {% if formAgregarACola.email.errors %}
+                {{ formAgregarACola.email(class="form-control form-control-lg is-invalid")}}
+                {% for error in errors %}
+                    <div class="invalid-feedback">
+                        <span>
+                            {{ error }}
+                        </span>
+                    </div>
+                {% endfor %}
+                <div class="invalid-feedback">
+                    <span>
+                        algun error
+                    </span>
+                </div>
+            {% else %}
+                {{ formAgregarACola.email(class="form-control form-control-lg") }}
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="formm-group">
+        {{ formAgregarACola.submit(class="btn btn-outline-info")}}
+    </div>
+</form>
+<br>
+<br>
+<br>
+
+<form method="POST" action="">
+    {{ formLlenarInscripcion.hidden_tag() }}
+    <legend class="border-bottom mb-4">Llenar Inscripcion</legend>
+    <fieldset class="form-group">
+        <div class="form-group">
+        {{ formLlenarInscripcion.email.label(class="form-control-label") }}
+            {% if formLlenarInscripcion.email.errors %}
+                {{ formLlenarInscripcion.email(class="form-control form-control-lg is-invalid")}}
+                {% for error in errors %}
+                    <div class="invalid-feedback">
+                        <span>
+                            {{ error }}
+                        </span>
+                    </div>
+                {% endfor %}
+                <div class="invalid-feedback">
+                    <span>
+                        algun error
+                    </span>
+                </div>
+            {% else %}
+                {{ formLlenarInscripcion.email(class="form-control form-control-lg") }}
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="formm-group">
+        {{ formLlenarInscripcion.submit(class="btn btn-outline-info")}}
+    </div>
+</form>
+{% endblock content %}}

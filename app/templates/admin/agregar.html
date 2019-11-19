@@ -2,12 +2,14 @@
     {% block tittle %}
         Modulo de Administrador
     {% endblock tittle %}
+    {% block scripts %}
+    {% endblock scripts %}
     {% block content %}
         <div>
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Ingresa hoy!</legend>
+                    <legend class="border-bottom mb-4">Crear Usuario</legend>
                     <div class="form-group">
                         {{ form.tipo.label(class="form-control-label") }}
                         {% if form.tipo.errors %}

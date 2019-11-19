@@ -1,137 +1,180 @@
 {% extends "layout.html" %}
-   {% block tittle %}
-      GHOLA MAEDICO
-   {% endblock tittle %}
-   {% block content %}
-   <h1 class="font-weight-bold">Bienvenido: Medico ...</h1>
-   <div class="row">
-       <div class="column">
-           
-           <button class="btn btn-primary">Siguiente Paciente</button>
-           <div class="row">
-               <div class="column">
-                   <p>Id Paciente:</p>
-               </div>
-               <div class="column">
-                    <p>Nombre Paciente:</p>
-                </div>
-           </div>
-           <p>Descripción:</p>
-           <p>Resultados:</p>
-           <p>Comentarios:</p>
+    {% block tittle %}
+        MEDICO
+    {% endblock tittle %}
+    {% block scripts %}
+        
 
-           <div class="row">
-                <div class="column">
-                    <button class="btn btn-primary">Guardar</button>
-                </div>
-                <div class="column">
-                    <button class="btn btn-primary">Siguiente</button>
-                </div>
+    {% endblock scripts %}
+    {% block content %}
+   <h1 class="font-weight-bold">Bienvenido {{user['nombre']}} {{user['apellido']}}</h1>
+   
+   {% if atencion == False or atencion == None %}
+   <!-- BOTON SIGUIENTE PACIENTE -->
+   <form method="POST" action="" id="botonSiguientePacienteForm">
+       <legend class="border-bottom mb-4">Consulta Medica</legend>
+       {{ siguientePacienteForm.hidden_tag() }}
+        <div class="formm-group">
+            {{ siguientePacienteForm.submit(class="btn btn-primary")}}
+        </div>
+    </form>
+    <!-- FIN BOTON SIGUIENTE PACIENTE -->
+    {% endif %}
+    
+
+
+   {% if atencion == True %}
+   {% if paciente %}
+   <div id="datosPaciente">
+       <P>Datos del Paciente</P>
+       <div class="row">
+            <!-- <div class="column" style="width:33.33%">
+                <p>Id: {{paciente['_id']}}</p>
+            </div> -->
+            <div class="column" style="width:33.33%">
+                 <p>Nombre: {{paciente['nombre']}}</p>
             </div>
-       </div>
-
-       <div class="column">
-           <p>Examenes a realizar</p>
+            <div class="column" style="width:33.33%">
+                <p>Apellido: {{paciente['apellido']}}</p>
+            </div>
         </div>
    </div>
-   {%if 1==0%}
-   <!-- Paciente -->
-   <h1 class="font-weight-bold">Bienvenido {{user['nombre']}}</h1>
-        <div>
-            <div class="text-justify">
-                <div class="row">
-                    <div class="column">
-                        <p>NOMBRE: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                    <div class="column">
-                        <p>CIUDAD: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <p>APELLIDO: <span>{{user['apellido']}}</span> </p>
-                    </div>
-                    <div class="column">
-                        <p>BARRIO: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <p>TIPO DOCUMENTO: <span>{{user['tipoDocumento']}}</span> </p>
-                    </div>
-                    <div class="column">
-                        <p>EDAD: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <p>NUMERO DOCUMENTO: <span>{{user['numeroDocumento']}}</span> </p>
-                    </div>
-                    <div class="column">
-                        <p>GENERO: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column">
-                        <p>EMAIL: <span>{{email}}</span> </p>
-                    </div>
-                    <div class="column">
-                        <p>TELEFONO: <span>{{user['nombre']}}</span> </p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                              <th scope="col">Examenes Realizados</th>
-                              <th scope="col">Examenes Pendientes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in consultas %} 
-                                <tr>
-                                    {% if (i[0]|length) > 0 %}
-                                        <td>{{i[0]['descripcion']}}</td>
-                                    {% else %}
-                                        <td></td>
-                                    {% endif %}
-                                    {% if (i[1]|length) > 0 %}
-                                        <td>{{i[1]['descripcion']}}</td>
-                                    {% else %}
-                                        <td></td>
-                                    {% endif %}
-                                </tr>
+   {% endif %}
+
+    <div class="row">
+        <div class="column" style="width:70%">
+        <!-- Form de resultados de consulta -->
+           <form method="POST" action="" id="responderConsultaMedicoForm">
+               {{ formResultados.hidden_tag() }}
+               <fieldset class="form-group">  
+                <legend class="border-bottom mb-4"></legend>
+                    <div class="form-group">
+                        {{ formResultados.descripcion.label(class="form-control-label") }}
+                        {% if formResultados.descripcion.errors %}
+                            {{ formResultados.descripcion(class="form-control form-control-lg is-invalid")}}
+                            {% for error in errors %}
+                                <div class="invalid-feedback">
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                </div>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="column">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                  <th scope="col">Descripción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for i in consultas %}
-                                    <tr>
-                                        {% if (i[0]|length) > 0 %}
-                                            <td>{{i[0]['resultados']}}</td>
-                                        {% else %}
-                                            <td></td>
-                                        {% endif %}
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                            <div class="invalid-feedback">
+                                <span>
+                                    algun error
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ formResultados.descripcion(class="form-control form-control-lg") }}
+                        {% endif %}
                     </div>
-            </div>
-        </div>
-   {%endif%}
-        
-            
+    
+                    <div class="form-group">
+                        {{ formResultados.resultados.label(class="form-control-label") }}
+                        {% if formResultados.resultados.errors %}
+                            {{ formResultados.resultados(class="form-control form-control-lg is-invalid")}}
+                            {% for error in errors %}
+                                <div class="invalid-feedback">
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    algun error
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ formResultados.resultados(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ formResultados.comentarios.label(class="form-control-label") }}
+                        {% if formResultados.comentarios.errors %}
+                            {{ formResultados.comentarios(class="form-control form-control-lg is-invalid")}}
+                            {% for error in errors %}
+                                <div class="invalid-feedback">
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    algun error
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ formResultados.comentarios(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="formm-group">
+                    {{ formResultados.submit(class="btn btn-primary")}}
+                </div>
+            </form>
+            <!-- Final Form de resultados de consulta -->
+       </div>
+
+       
+       <div class="column" style="width:30%">
+           <!-- Form Mandar otro examen al paciente -->
+           <form method="POST" action="" id="remitirMedicoForm">
+                {{ formOtrosExamenes.hidden_tag() }}
+                <fieldset class="form-group">       
+                    <legend class="border-bottom mb-4"></legend>            
+                    <div class="form-group">
+                        {{ formOtrosExamenes.examenes.label(class="form-control-label") }}
+                        {% if formOtrosExamenes.examenes.errors %}
+                            {{ formOtrosExamenes.examenes(class="form-control form-control-lg is-invalid")}}
+                            {% for error in errors %}
+                                <div class="invalid-feedback">
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    algun error
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ formOtrosExamenes.examenes(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+    
+                    <div class="form-group">
+                        {{ formOtrosExamenes.dependencias.label(class="form-control-label") }}
+                        {% if formOtrosExamenes.dependencias.errors %}
+                            {{ formOtrosExamenes.dependencias(class="form-control form-control-lg is-invalid")}}
+                            {% for error in errors %}
+                                <div class="invalid-feedback">
+                                    <span>
+                                        {{ error }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    algun error
+                                </span>
+                            </div>
+                        {% else %}
+                            {{ formOtrosExamenes.dependencias(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="formm-group">
+                    {{ formOtrosExamenes.submit(class="btn btn-primary")}}
+                </div>
+            </form>
+           <!-- Final Form Mandar otro examen al paciente -->
+        </div>  
+   </div>
+    {% endif %}
    {% endblock content %}}
 
    

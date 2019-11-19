@@ -1,8 +1,13 @@
 {% extends "layout.html" %}
-   {% block tittle %}
-      {{user['nombre']}}
-   {% endblock tittle %}
-   {% block content %}
+    {% block tittle %}
+        {{user['nombre']}}
+    {% endblock tittle %}
+    {% block scripts %}
+        realizadas = {{realizadas}};
+        espera = {{espera}};
+        console.log(realizadas)
+    {% endblock scripts %}
+    {% block content %}
         <h1 class="font-weight-bold">Bienvenido {{user['nombre']}}</h1>
         <div>
             <div class="text-justify">
@@ -11,7 +16,7 @@
                         <p>NOMBRE: <span>{{user['nombre']}}</span> </p>
                     </div>
                     <div class="column">
-                        <p>CIUDAD: <span>{{user['nombre']}}</span> </p>
+                        <p>CIUDAD: <span>{{user['ciudad']}}</span> </p>
                     </div>
                 </div>
                 <div class="row">
@@ -19,7 +24,7 @@
                         <p>APELLIDO: <span>{{user['apellido']}}</span> </p>
                     </div>
                     <div class="column">
-                        <p>BARRIO: <span>{{user['nombre']}}</span> </p>
+                        <p>DIRECCION: <span>{{user['direccion']}}</span> </p>
                     </div>
                 </div>
                 <div class="row">
@@ -27,7 +32,7 @@
                         <p>TIPO DOCUMENTO: <span>{{user['tipoDocumento']}}</span> </p>
                     </div>
                     <div class="column">
-                        <p>EDAD: <span>{{user['nombre']}}</span> </p>
+                        <p>EDAD: <span>{{user['edad']}}</span> </p>
                     </div>
                 </div>
                 <div class="row">
@@ -35,7 +40,7 @@
                         <p>NUMERO DOCUMENTO: <span>{{user['numeroDocumento']}}</span> </p>
                     </div>
                     <div class="column">
-                        <p>GENERO: <span>{{user['nombre']}}</span> </p>
+                        <p>GENERO: <span>{{user['genero']}}</span> </p>
                     </div>
                 </div>
                 <div class="row">
@@ -43,13 +48,13 @@
                         <p>EMAIL: <span>{{email}}</span> </p>
                     </div>
                     <div class="column">
-                        <p>TELEFONO: <span>{{user['nombre']}}</span> </p>
+                        <p>TELEFONO: <span>{{user['telefono']}}</span> </p>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="column">
-                    <table class="table">
+                    <table class="table" style="overflow:auto;">
                         <thead>
                             <tr>
                               <th scope="col">Examenes Realizados</th>

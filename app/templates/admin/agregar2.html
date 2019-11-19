@@ -2,96 +2,463 @@
     {% block tittle %}
         Modulo de Administrador
     {% endblock tittle %}
+    {% block scripts %}
+    {% endblock scripts %}
     {% block content %}
-        <div>
-            <form method="POST" action="">
-                {{ form.hidden_tag() }}
-                <fieldset class="form-group">
-                    <legend class="border-bottom mb-4">Ingresa hoy!</legend>
-                    {% if tipoUsuario == 'Medico' %}
-                        <div class="form-group">
-                            {{ form.tipoMedico.label(class="form-control-label") }}
-                            {% if form.tipoMedico.errors %}
-                                {{ form.tipoMedico(class="form-control form-control-lg is-invalid")}}
-                                {% for error in errors %}
-                                    <div class="invalid-feedback">
-                                        <span>
-                                            {{ error }}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.tipoMedico(class="form-control form-control-lg") }}
-                            {% endif %}
+        {% if userType == usertypes[0] %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Crear Usuario Empresa</legend>
+               
+                <div class="form-group">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{ form.nombre(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
                         </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
                     {% endif %}
-                    <div class="form-group">
-                        {{ form.nombre.label(class="form-control-label") }}
-                        {% if form.nombre.errors %}
-                            {{ form.nombre(class="form-control form-control-lg is-invalid")}}
-                            {% for error in errors %}
-                                <div class="invalid-feedback">
-                                    <span>
-                                        {{ error }}
-                                    </span>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            {{ form.nombre(class="form-control form-control-lg") }}
-                        {% endif %}
-                    </div>
-                    {% if tipoUsuario == 'Paciente' or tipoUsuario == 'Admin' or tipoUsuario == 'Recepcionista' or tipoUsuario == 'Medico' %}
-                        <div class="form-group">
-                            {{ form.apellido.label(class="form-control-label") }}
-                            {% if form.apellido.errors %}
-                                {{ form.apellido(class="form-control form-control-lg is-invalid")}}
-                                {% for error in errors %}
-                                    <div class="invalid-feedback">
-                                        <span>
-                                            {{ error }}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.apellido(class="form-control form-control-lg") }}
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            {{ form.tipoDocumento.label(class="form-control-label") }}
-                            {% if form.tipoDocumento.errors %}
-                                {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
-                                {% for error in errors %}
-                                    <div class="invalid-feedback">
-                                        <span>
-                                            {{ error }}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.tipoDocumento(class="form-control form-control-lg") }}
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            {{ form.numeroDocumento.label(class="form-control-label") }}
-                            {% if form.numeroDocumento.errors %}
-                                {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
-                                {% for error in errors %}
-                                    <div class="invalid-feedback">
-                                        <span>
-                                            {{ error }}
-                                        </span>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {{ form.numeroDocumento(class="form-control form-control-lg") }}
-                            {% endif %}
-                        </div>
-                    {% endif %}              
-                </fieldset>
-                <div class="formm-group">
-                    {{ form.submit(class="btn btn-outline-info")}}
                 </div>
-            </form>
-        </div>
+
+                <div class="form-group">
+                    {{ form.codigoIdentificacion.label(class="form-control-label") }}
+                    {% if form.codigoIdentificacion.errors %}
+                        {{ form.codigoIdentificacion(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.codigoIdentificacion(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="formm-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        {% endif %}
+        {% if userType == usertypes[1] %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Crear Usuario Medico</legend>
+               
+                <div class="form-group">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{ form.nombre(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.apellido.label(class="form-control-label") }}
+                    {% if form.apellido.errors %}
+                        {{ form.apellido(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.apellido(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipoDocumento.label(class="form-control-label") }}
+                    {% if form.tipoDocumento.errors %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipoMedico.label(class="form-control-label") }}
+                    {% if form.tipoMedico.errors %}
+                        {{ form.tipoMedico(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.tipoMedico(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.numeroDocumento.label(class="form-control-label") }}
+                    {% if form.numeroDocumento.errors %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="formm-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        {% endif %}
+        {% if userType == usertypes[2] %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Crear Usuario Empresa</legend>
+               
+                <div class="form-group">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{ form.nombre(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.apellido.label(class="form-control-label") }}
+                    {% if form.apellido.errors %}
+                        {{ form.apellido(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.apellido(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipoDocumento.label(class="form-control-label") }}
+                    {% if form.tipoDocumento.errors %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.numeroDocumento.label(class="form-control-label") }}
+                    {% if form.numeroDocumento.errors %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="formm-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        {% endif %}
+        {% if userType == usertypes[3] %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Crear Usuario Empresa</legend>
+               
+                <div class="form-group">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{ form.nombre(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.apellido.label(class="form-control-label") }}
+                    {% if form.apellido.errors %}
+                        {{ form.apellido(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.apellido(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipoDocumento.label(class="form-control-label") }}
+                    {% if form.tipoDocumento.errors %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.numeroDocumento.label(class="form-control-label") }}
+                    {% if form.numeroDocumento.errors %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="formm-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        {% endif %}
+        {% if userType == usertypes[4] %}
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+               <legend class="border-bottom mb-4">Crear Usuario Empresa</legend>
+               
+                <div class="form-group">
+                    {{ form.nombre.label(class="form-control-label") }}
+                    {% if form.nombre.errors %}
+                        {{ form.nombre(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.nombre(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.apellido.label(class="form-control-label") }}
+                    {% if form.apellido.errors %}
+                        {{ form.apellido(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.apellido(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.tipoDocumento.label(class="form-control-label") }}
+                    {% if form.tipoDocumento.errors %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.tipoDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.numeroDocumento.label(class="form-control-label") }}
+                    {% if form.numeroDocumento.errors %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg is-invalid")}}
+                        {% for error in errors %}
+                            <div class="invalid-feedback">
+                                <span>
+                                    {{ error }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        <div class="invalid-feedback">
+                            <span>
+                                algun error
+                            </span>
+                        </div>
+                    {% else %}
+                        {{ form.numeroDocumento(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="formm-group">
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+        {% endif %}
+        
         
     {% endblock content %}}
