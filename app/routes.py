@@ -78,16 +78,22 @@ def recepcionModule():
                     possible = True
                     if i['estadoConsulta'] == 'Espera':
                         for j in i['dependencias']:
+                            possible = True
                             if j in paciente['consultasEspera']:
                                 possible = False
-                    if possible == True:
-                        if len(db.getUserInfo('cola',{'type':i['especialista']})) == 0:
-                            db.debug.cola.insert({'type':i['especialista'], 'data':[]})
-                        if not paciente['_id'] in db.getUserInfo('cola',{'type':i['especialista']})[0]['data']:
-                            db.appendUserParameter('cola', {'type':i['especialista']},'data',paciente['_id'])
+                        if possible == True:
+                            if len(db.getUserInfo('cola',{'type':i['especialista']})) == 0:
+                                db.debug.cola.insert({'type':i['especialista'], 'data':[]})
+                            # if not paciente['_id'] in db.getUserInfo('cola',{'type':i['especialista']})[0]['data']:
+                            colaConsulta = {
+                                'userId':paciente['_id'],
+                                'consultaId':i['idConsulta'],
+                                'activo':'si'
+                            }
+                            db.appendUserParameter('cola', {'type':i['especialista']},'data',colaConsulta)
                             flash(f"Paciente {formAgregarACola.email.data} agregado a cola de {i['especialista']}.","info")
-                        else:
-                            flash(f"No se agrego a {formAgregarACola.email.data} a cola de {i['especialista']} porque ya se encuentra en ella.","danger")
+                            # else:
+                            #     flash(f"No se agrego a {formAgregarACola.email.data} a cola de {i['especialista']} porque ya se encuentra en ella.","danger")
             else:
                 flash(f"El paciente {formAgregarACola.email.data} no existe.","warning")
                     
@@ -174,13 +180,14 @@ def medicoModule():
             tmpColaOcupados = db.getUserInfo('cola',{"type":'enConsulta'})
             if len(tmpColaMedico) > 0 and len(tmpColaMedico[0]['data']) > 0:
                 i = 0
-                while tmpColaMedico[0]['data'][i] in tmpColaOcupados[0]['data']:
+                while i < len(tmpColaMedico[0]['data']) and (tmpColaMedico[0]['data'][i]['userId'] in tmpColaOcupados[0]['data'] or tmpColaMedico[0]['data'][i]['activo']=='no'):
                     i+=1
                 if i < len(tmpColaMedico[0]['data']):
-                    pacienteId = tmpColaMedico[0]['data'][i]
+                    pacienteId = tmpColaMedico[0]['data'][i]['userId']
+                    consultaId = tmpColaMedico[0]['data'][i]['consultaId']
                     #Agregamos a la cola de ocupados al paciente que es llamado
                     db.appendUserParameter('cola',{'type':'enConsulta'},'data',pacienteId)
-                    return redirect(url_for('medicoModule2',pacienteId=pacienteId))
+                    return redirect(url_for('medicoModule2',pacienteId=pacienteId, consultaId=consultaId))
             else:
                 flash(f"Aun no hay pacientes en la cola de {user['tipoDeMedico']}","danger")
         return render_template('medicos/main.html', user=user, paciente=paciente, atencion=atencion, siguientePacienteForm=siguientePacienteForm, formResultados=formResultados, formOtrosExamenes=formOtrosExamenes)
@@ -188,8 +195,8 @@ def medicoModule():
     return redirect(url_for('home'))
 
 
-@app.route('/medico/<pacienteId>', methods=['GET','POST'])
-def medicoModule2(pacienteId):
+@app.route('/medico/<pacienteId>/<consultaId>', methods=['GET','POST'])
+def medicoModule2(pacienteId,consultaId):
     sessionCookie = checkSessionCookie()
     if sessionCookie and sessionCookie['userType'] == USERTYPES[1]:
         siguientePacienteForm = SiguientePacienteMedicoForm()
@@ -201,6 +208,17 @@ def medicoModule2(pacienteId):
         
         if formResultados.validate_on_submit():
             flash(f'Consulta Terminada.', 'success')
+            print()
+            print(formResultados.descripcion.data)
+            print(pacienteId)
+            print(consultaId)
+            print()
+            db.debug.Paciente.update({'_id':ObjectId(pacienteId), 'consultas.idConsulta':consultaId}, {'$set':{'consultas.$.descripcion':formResultados.descripcion.data}})
+            db.debug.Paciente.update({'_id':ObjectId(pacienteId), 'consultas.idConsulta':consultaId}, {'$set':{'consultas.$.comentarios':formResultados.comentarios.data}})
+            db.debug.Paciente.update({'_id':ObjectId(pacienteId), 'consultas.idConsulta':consultaId}, {'$set':{'consultas.$.resultados':formResultados.resultados.data}})
+            db.debug.cola.update({'type':user['tipoDeMedico'], 'data.userId':pacienteId, 'data.consultaId':consultaId}, {'$set':{'data.$.activo':'no'}})
+            db.debug.cola.update({'type':'enConsulta', 'userId':pacienteId}, {'$set':{'data.$.activo':'no'}})
+
             return redirect(url_for('medicoModule'))
 
         if formOtrosExamenes.validate_on_submit() and formOtrosExamenes.examenes.data != None:

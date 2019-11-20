@@ -99,6 +99,9 @@ class DB:
     def getUserInfoById(self, group, userId):
         return self.__db[group].find_one({'_id':userId})
     
+    def createCola(self):
+        self.__db.cola.update({'type':'enConsulta', 'data':[]},{'type':'enConsulta', 'data':[]}, upsert=True)
+        # self.__db.cola.createIndex( { 'type': 1 }, unique=True )
     def getUserInfoByEmail(self, group, email):
         return self.__db[group].find_one({'email':email})
     

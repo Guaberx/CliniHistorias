@@ -10,7 +10,11 @@ body{
 h3{
     color: blue;
 }
-
+.footerStyle{
+  background-color: rgb(1, 52, 99);
+  color: white;
+  position: fixed;
+}
 /* body{
     background-color: #A1ACA4    ;
 } */

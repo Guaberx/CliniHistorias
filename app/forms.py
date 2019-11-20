@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SelectMultipleField, TextAreaField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Length, Email, EqualTo, NumberRange
 from app import db
@@ -46,9 +46,9 @@ class EnviarExamenesMedicoForm(FlaskForm):
     submit = SubmitField('Mandar Examenes')
 
 class LlenarHistoriaClinicaMedicoForm(FlaskForm):
-    descripcion = StringField('Descripcion', validators=[DataRequired(), Length(min=0,max=99999999999999999999)], render_kw={"placeholder":"Escriba los sintomas"})
-    resultados = StringField('Resultados',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba los resultados del examen"})
-    comentarios = StringField('Comentarios',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba cosas a tener en cuenta (Este campo no debe contener informacion sensible o privada)"})
+    descripcion = TextAreaField('Descripcion', validators=[DataRequired(), Length(min=0,max=99999999999999999999)], render_kw={"placeholder":"Escriba los sintomas"})
+    resultados = TextAreaField('Resultados',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba los resultados del examen"})
+    comentarios = TextAreaField('Comentarios',validators=[DataRequired(),Length(min=0, max=99999999999999999999)], render_kw={"placeholder":"Escriba cosas a tener en cuenta (Este campo no debe contener informacion sensible o privada)"})
     submit = SubmitField('Guardar')
 
 #Empresa
