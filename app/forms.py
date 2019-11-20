@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, SelectMultipleField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import ValidationError, DataRequired, Length, Email, EqualTo, NumberRange
 from app import db
 from app.constants import *
@@ -51,6 +52,26 @@ class LlenarHistoriaClinicaMedicoForm(FlaskForm):
     submit = SubmitField('Guardar')
 
 #Empresa
+class MandarExamenEmpresaForm(FlaskForm):
+    tiposMedicos = []
+    for i in ESPECIALIDADES:
+        tiposMedicos.append((ESPECIALIDADES[i],ESPECIALIDADES[i]))
+    examenes = SelectField('Especialista', choices=tiposMedicos)
+    date = DateField('Fecha de la Consulta')
+    submit = SubmitField('Mandar Examenes')
+
+class RegistrarUsuarioEmpresaForm(FlaskForm):
+    email = StringField('Email',validators=[
+        DataRequired(),Email()
+        ], render_kw={"placeholder":"bananin@elpa.nadero"})
+    password = PasswordField('Contraseña',validators=[DataRequired()], render_kw={"placeholder":"******"})
+    nombre = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
+    apellido = StringField('Apellido Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
+    tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
+    tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
+    numeroDocumento = StringField('Numero de Documento',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    submit = SubmitField('Registrar Empleado')
+
 #Recepcionista
 class RecepcionistaAgregarAColaForm(FlaskForm):
     email = StringField('Email',validators=[DataRequired(),Email()], render_kw={"placeholder":"alguien@dominio.com"})
@@ -83,12 +104,15 @@ class AgregarUsuarioEmpresa(FlaskForm):
 
 class AgregarUsuarioMedico(FlaskForm):
     nombre = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
-    apellido = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
+    apellido = StringField('Apellido Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
     tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
     tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    tiposMedicos = [('Cardiologo', 'Cardiologo'), ('Ortopedista','Ortopedista'), ('Enfermero','Enfermero'), ('Laboratorista','Laboratorista') ]
-    tipoMedico = SelectField('Tipo de Documento', choices=tiposMedicos)
-    numeroDocumento = StringField('Nombre Medico',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    # tiposMedicos = [('Cardiologo', 'Cardiologo'), ('Ortopedista','Ortopedista'), ('Enfermero','Enfermero'), ('Laboratorista','Laboratorista') ]
+    tiposMedicos = []
+    for i in ESPECIALIDADES:
+        tiposMedicos.append((ESPECIALIDADES[i],ESPECIALIDADES[i]))
+    tipoMedico = SelectField('Especialidad', choices=tiposMedicos)
+    numeroDocumento = StringField('Numero de Documento',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
     submit = SubmitField('Crear Medico')
 
 class AgregarUsuarioRecepcionista(FlaskForm):
@@ -96,21 +120,21 @@ class AgregarUsuarioRecepcionista(FlaskForm):
     apellido = StringField('Nombre Recepcionista',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
     tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
     tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    numeroDocumento = StringField('Nombre Recepcionista',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    numeroDocumento = StringField('Numero de Documento',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
     submit = SubmitField('Crear Recepcionista')
 
 class AgregarUsuarioPaciente(FlaskForm):
     nombre = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
-    apellido = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
+    apellido = StringField('Apellido Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
     tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
     tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    numeroDocumento = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    numeroDocumento = StringField('Numero de Documento',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
     submit = SubmitField('Crear Paciente')
 
 class AgregarUsuarioAdmin(FlaskForm):
     nombre = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Nombre"})
-    apellido = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
+    apellido = StringField('Apellido Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Apellido"})
     tiposDocumentos = [('Cedula', 'Cedula'), ('Tarjeta de Identidad', 'Tarjeta de Identidad'),('Pasaporte', 'Pasaporte'), ('Cedula de Extranjeria', 'Cedula de Extranjeria')]
     tipoDocumento = SelectField('Tipo de Documento', choices=tiposDocumentos)
-    numeroDocumento = StringField('Nombre Paciente',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
+    numeroDocumento = StringField('Numero de Documento',validators=[DataRequired(),Length(min=2, max=20)], render_kw={"placeholder":"Numero Documento."})
     submit = SubmitField('Crear Admin')

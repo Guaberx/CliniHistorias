@@ -1,17 +1,48 @@
 {% extends "layout.html" %}
     {% block tittle %}
-        EMPRESA
+        Modulo de Administrador
     {% endblock tittle %}
     {% block scripts %}
-        
-
     {% endblock scripts %}
     {% block content %}
-    <h1 class="font-weight-bold">Bienvenido: {{user['nombre']}}</h1>
-    <h2 class="font-weight-bold">Empleados</h2>
-    <script>
-        
-    </script>
-    {% endblock content %}}
+        <h1>Empresa: {{user['nombre']}}</h1>
+        <a class="btn btn-primary" href={{ url_for('empresaModuleRegistrarEmpleado') }}>Registrar Empleado</a>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellido</th>
+                        <th scope="col">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in empleados %} 
+                        <tr>
+                            <td><a href="/empresa/empleado/{{i['email']}}">{{i['nombre']}}</a></td>
+                            <td><a href="/empresa/empleado/{{i['email']}}">{{i['apellido']}}</a></td>
+                            <td><a href="/empresa/empleado/{{i['email']}}">{{i['email']}}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <script>
+            const realizarConsulta = document.forms['responderConsultaMedicoForm'];
 
-   
+            realizarConsulta.addEventListener('click', function(e){
+                if(e.taget.id == 'btnEliminar'){
+                    const li = e.target.parentElement;
+                    list.removeChild(li);
+                    console.log("Funciona")
+                }
+            });
+
+            // realizarConsulta.addEventListener('submit', function(e){
+            //     e.preventDefault();
+            //     console.log("Funciona Remitir Form")
+            // });
+    
+            
+        </script>
+    {% endblock content %}}

@@ -81,11 +81,15 @@ def recepcionModule():
                             if j in paciente['consultasEspera']:
                                 possible = False
                     if possible == True:
+                        if len(db.getUserInfo('cola',{'type':i['especialista']})) == 0:
+                            db.debug.cola.insert({'type':i['especialista'], 'data':[]})
                         if not paciente['_id'] in db.getUserInfo('cola',{'type':i['especialista']})[0]['data']:
                             db.appendUserParameter('cola', {'type':i['especialista']},'data',paciente['_id'])
                             flash(f"Paciente {formAgregarACola.email.data} agregado a cola de {i['especialista']}.","info")
                         else:
                             flash(f"No se agrego a {formAgregarACola.email.data} a cola de {i['especialista']} porque ya se encuentra en ella.","danger")
+            else:
+                flash(f"El paciente {formAgregarACola.email.data} no existe.","warning")
                     
 
         return render_template('recepcion/main.html', user=user, formAgregarACola=formAgregarACola, formLlenarInscripcion=formLlenarInscripcion)
@@ -96,7 +100,63 @@ def empresaModule():
     sessionCookie = checkSessionCookie()
     if sessionCookie and sessionCookie['userType'] == USERTYPES[0]:
         user = db.getUserInfoById(sessionCookie['userType'], ObjectId(sessionCookie['id']))
-        return render_template('empresa/main.html', user=user)
+        empleados = db.getUserInfo('users', {"_id":{"$in":user['empleados']}})
+        for i in range(len(empleados)):
+            tmpEmpleado = db.getUserInfo('Paciente',{'_id':ObjectId(empleados[i]['userId'])})
+            empleados[i].update(tmpEmpleado[0])
+ 
+        
+        return render_template('empresa/main.html', user=user, empleados=empleados)
+    return redirect(url_for('home'))
+
+@app.route('/empresa/empleado/<email>', methods=['GET','POST'])
+def empresaModuleEmpleado(email):
+    sessionCookie = checkSessionCookie()
+    if sessionCookie and sessionCookie['userType'] == USERTYPES[0]:
+        mandarExamenForm = MandarExamenEmpresaForm()
+        user = db.getUserInfoById(sessionCookie['userType'], ObjectId(sessionCookie['id']))
+        empleadoUser = db.getUserInfoByEmail('users',email)
+        empleado = db.getUserInfo('Paciente',{'_id':empleadoUser['userId']})[0]
+        empleado.update(empleadoUser)
+        if mandarExamenForm.validate_on_submit():
+            tmpN = len(empleado['consultas'])
+            consulta = {
+                'idConsulta':tmpN,
+                'fecha':str(mandarExamenForm.date.data),
+                'descripcion': mandarExamenForm.examenes.data,
+                'resultados':'','comentarios': '',
+                'dependencias':[],
+                'estadoConsulta': 'Espera',
+                'especialista':mandarExamenForm.examenes.data,
+                'atendio':[]
+                }
+            db.appendUserParameter('Paciente',{'_id':empleadoUser['userId']},"consultas", consulta)
+            flash(f'Consulta agregada exitosamente.', 'success')
+        return render_template('empresa/empleado.html', user=user, empleado=empleado, form=mandarExamenForm)
+    return redirect(url_for('home'))
+
+@app.route('/empresa/registrarEmpleado', methods=['GET','POST'])
+def empresaModuleRegistrarEmpleado():
+    sessionCookie = checkSessionCookie()
+    if sessionCookie and sessionCookie['userType'] == USERTYPES[0]:
+        user = db.getUserInfoById(sessionCookie['userType'], ObjectId(sessionCookie['id']))
+        form = RegistrarUsuarioEmpresaForm()
+        if form.validate_on_submit():
+                email = form.email.data
+                hashedPassword = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+                if db.userExists(email):
+                    flash(f'El usuario {email} ya existe. Intente con otro email.', 'warning')
+                    return redirect(url_for('empresaModuleRegistrarEmpleado'))
+                flash(f'El usuario ha sido creado exitosamente.', 'success')
+                creationData ={}
+                creationData['nombre'] = form.nombre.data
+                creationData['apellido'] = form.apellido.data
+                creationData['tipoDocumento'] = form.tipoDocumento.data
+                creationData['numeroDocumento'] = form.numeroDocumento.data
+                tmpId = db.createUsers(email,hashedPassword,USERTYPES[3],creationData)
+                db.appendUserParameter('Empresa',{"_id":ObjectId(user['_id'])},"empleados",tmpId[0])
+                return redirect(url_for('empresaModule'))
+        return render_template('empresa/registrarEmpleado.html', form=form, user=user)
     return redirect(url_for('home'))
 
 @app.route('/medico', methods=['GET','POST'])
@@ -112,7 +172,7 @@ def medicoModule():
         if siguientePacienteForm.validate_on_submit():
             tmpColaMedico = db.getUserInfo('cola',{"type":user['tipoDeMedico']})
             tmpColaOcupados = db.getUserInfo('cola',{"type":'enConsulta'})
-            if len(tmpColaMedico[0]['data']) > 0:
+            if len(tmpColaMedico) > 0 and len(tmpColaMedico[0]['data']) > 0:
                 i = 0
                 while tmpColaMedico[0]['data'][i] in tmpColaOcupados[0]['data']:
                     i+=1
@@ -179,8 +239,6 @@ def pacienteModule():
         return render_template('paciente/main.html', user=user, email=sessionCookie['email'], consultas = consultas, realizadas = realizadas, espera = espera)
     return redirect(url_for('home'))
 
-from flask import request
-# request.data
 @app.route('/admin')
 def adminModule():
     usuarios = db.getAllUsers('users')
@@ -249,8 +307,6 @@ def adminModuleAdd2():
     else:
         flash(f'Algo salio mal.', 'warning')
         return redirect(url_for('home'))
-
-
 
 #DEBUG THINGS. DONT LOOK AT THE CODE BELOW THIS LINE
 

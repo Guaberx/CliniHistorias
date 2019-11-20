@@ -69,13 +69,13 @@ class DB:
             #Falta verificar si el usuario no existe antes de creatlo
 
             tmpUserId = self.__db[userType].insert(data)
-            self.__db.users.insert({
+            newUserId = self.__db.users.insert({
                 'email':email,
                 'password': hashedPassword,
                 'type': userType,
                 'userId': tmpUserId,
             })
-            return True
+            return (newUserId,tmpUserId)
         return False
     
     #GETS
